@@ -12,7 +12,6 @@ class Book(models.Model):
     def __str__(self):
         return self.title
 
-
 STATUS = (
     ('Completed', "Completed"),
     ('Pending', "Completed"),
