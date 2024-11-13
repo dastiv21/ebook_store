@@ -3,7 +3,6 @@ import datetime
 import os
 import sys
 
-
 def run_linters(file_paths):
     """Run Pylint and Flake8 on the provided file paths and log the results."""
     today = datetime.date.today()
