@@ -1,40 +1,24 @@
 import subprocess
-import datetime
-
+from datetime import datetime
 
 def run_linters():
-    """Run Pylint and Flake8 on the entire project directory and log the results."""
-    today = datetime.date.today().strftime("%Y-%m-%d")
-    log_filename = f"linter_log_{today}.txt"
-
-    with open(log_filename, "w") as log_file:
-        print("Running Pylint...", file=log_file)
-        pylint_result = subprocess.run(["pylint", "**/*.py"], capture_output=True,
-                                       text=True)
-        log_file.write("Pylint Output:\n")
-        log_file.write(pylint_result.stdout)
+    """Run Pylint and Flake8 on the entire project directory and log results."""
+    timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+    log_filename = f"linter_log_{timestamp}.txt"
+    with open(log_filename, 'w') as log_file:
+        print(f"Running Pylint... (Log: {log_filename})", file=log_file)
+        pylint_result = subprocess.run(["pylint", "."], capture_output=True, text=True)
+        print(pylint_result.stdout, file=log_file)
         if pylint_result.stderr:
-            log_file.write("Pylint Errors:\n")
-            log_file.write(pylint_result.stderr)
-        log_file.write("\n")
+            print(pylint_result.stderr, file=log_file)
 
-        print("\nRunning Flake8...", file=log_file)
-        flake8_result = subprocess.run(["flake8", "."], capture_output=True,
-                                       text=True)
-        log_file.write("Flake8 Output:\n")
-        log_file.write(flake8_result.stdout)
+        print("\nRunning Flake8... (Log: {log_filename})", file=log_file)
+        flake8_result = subprocess.run(["flake8", "."], capture_output=True, text=True)
+        print(flake8_result.stdout, file=log_file)
         if flake8_result.stderr:
-            log_file.write("Flake8 Errors:\n")
-            log_file.write(flake8_result.stderr)
-        log_file.write("\n")
+            print(flake8_result.stderr, file=log_file)
 
-        if pylint_result.returncode != 0 or flake8_result.returncode != 0:
-            print("Linter checks found issues.")
-        else:
-            print("Linter checks completed successfully.")
-
+        print("\nLinter checks completed.", file=log_file)
 
 # Call the function
 run_linters()
-
-
