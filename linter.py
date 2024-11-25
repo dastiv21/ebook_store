@@ -57,7 +57,3 @@ def run_linters():
         print("Linter checks completed successfully.")
         return 0  # Return zero to indicate success
 
-
-if __name__ == "__main__":
-    # Exit with the appropriate code based on linter results
-    sys.exit(run_linters())
