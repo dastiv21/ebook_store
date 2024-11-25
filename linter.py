@@ -31,4 +31,5 @@ def run_linters():
 
 
 # Call the function
+print("Attempting to run linters")
 run_linters()
