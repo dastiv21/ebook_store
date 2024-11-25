@@ -58,3 +58,4 @@ python_files = [f for f in changed_files if f.endswith('.py')]
 
 # Call the function with the list of Python files
 run_linters(python_files)
+print("fine")

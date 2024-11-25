@@ -21,11 +21,11 @@ class TransactionViewSet(viewsets.ViewSet):
     def create(self, request):
         user = request.user
         book_id = request.data.get('book_id')
-        quantity = request.data.get('quantity')
+        quantity = int(request.data.get('quantity'))
 
         try:
             book = Book.objects.get(id=book_id)
-            if book.stock < quantity:
+            if book.stock < int(quantity):
                 return Response({"error": "Not enough stock"},
                                 status=status.HTTP_400_BAD_REQUEST)
 
