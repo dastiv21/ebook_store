@@ -1,4 +1,4 @@
-from rest_framework import viewsets, status, filters
+from rest_framework import viewsets, status, filters, permissions
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from .models import Book, Transaction
@@ -12,6 +12,7 @@ class BookViewSet(viewsets.ModelViewSet):
     filter_backends = [filters.SearchFilter]
     search_fields = ['title', 'author']
     pagination_class = BookPagination
+    permission_classes = [permissions.AllowAny]
 
 
 class TransactionViewSet(viewsets.ViewSet):

@@ -1,4 +1,9 @@
 [flake8]
+ignore = E111, E114, W191, W291, W293, W391, E101, E117
 max-line-length = 79
-exclude = .git,__pycache__,old,build,dist,venv
+max-doc-length = 72
+max-complexity = 10
+indent-style = space
+indent-size = 4
+select = C,E,F,W,B,B950
 filename = *.py

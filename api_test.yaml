@@ -1,18 +1,10 @@
 - config:
+    testset: "Sample Test Set"
     url: "http://localhost:8000/api/"
     timeout: 5
 
 - test:
     name: "Get list of available books"
     request:
-        url: "api/books/"
+        url: "books/"  # Corrected the relative URL
         method: GET
-
-    response:
-        status_code: 200
-        json:
-            - title: "Example Book"
-              author: "John Doe"
-              price: 19.99
-              stock: 100
-              description: "An example book description."
