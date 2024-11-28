@@ -1,0 +1,34 @@
+name: Update Changelog
+
+on:
+  schedule:
+    - cron: '0 0 * * *' # Runs daily at midnight
+  push:
+    branches:
+      - main
+
+jobs:
+  update-changelog:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.x'
+
+    - name: Install dependencies
+      run: pip install -r requirements.txt
+
+    - name: Run changelog update script
+      run: python format.py
+
+    - name: Commit and push changes
+      run: |
+        git config --global user.name 'Your Name'
+        git config --global user.email 'dastiv21@gmail.com'
+        git add README.md
+        git commit -m "Update changelog"
+        git push origin main
