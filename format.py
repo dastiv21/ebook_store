@@ -1,55 +1,36 @@
-import pytest
-from django.urls import reverse
-from rest_framework.test import APIClient
-from .models import Tag, Book, Transaction
+import subprocess
+import re
+from collections import defaultdict
 
+def extract_commit_messages(repo_path):
+    try:
+        # Get the list of tags
+        tags = subprocess.check_output(['git', 'tag'], cwd=repo_path).decode().splitlines()
 
-@pytest.mark.django_db
-def test_book_list_view(db_connection):
-    client = APIClient()
-    response = client.get(reverse('book-list'))
-    assert response.status_code == 200
-    assert response.json() == []
+        # Initialize a dictionary to store grouped commits
+        grouped_commits = defaultdict(list)
 
+        # Iterate over each tag
+        for tag in tags:
+            # Get the commit messages for the tag
+            commit_messages = subprocess.check_output(['git', 'log', '--pretty=format:%s', tag], cwd=repo_path).decode().splitlines()
 
-@pytest.mark.django_db
-def test_book_create_view(db_connection):
-    client = APIClient()
-    response = client.post(reverse('book-list'),
-                           {'title': 'Python for Beginners',
-                            'author': 'John Doe',
-                            'description': 'Learn Python from scratch.',
-                            'price': 19.99,
-                            'stock': 10})
-    assert response.status_code == 201
-    assert response.json() == {'id': 1,
-                               'title': 'Python for Beginners',
-                               'author': 'John Doe',
-                               'description': 'Learn Python from scratch.',
-                               'price': 19.99,
-                               'stock': 10,
-                               'created_at': response.json()['created_at'],
-                               'tags': [],
-                               'image': None}
+            # Iterate over each commit message
+            for message in commit_messages:
+                # Check if the commit message contains any keywords
+                if re.search(r'(feature|feat|new|add)', message, re.IGNORECASE):
+                    grouped_commits['Feature'].append(message)
+                elif re.search(r'(bug|fix|patch)', message, re.IGNORECASE):
+                    grouped_commits['Bug Fix'].append(message)
+                elif re.search(r'(improvement|enhancement|refactor)', message, re.IGNORECASE):
+                    grouped_commits['Improvement'].append(message)
 
+        return grouped_commits
+    except subprocess.CalledProcessError as e:
+        print(f"Error: {e}")
+        return {}
 
-@pytest.mark.django_db
-def test_transaction_create_view(db_connection):
-    client = APIClient()
-    user = User.objects.create_user(username='testuser', password='password')
-    client.force_authenticate(user=user)
-    book = Book.objects.create(title='Python for Beginners',
-                               author='John Doe',
-                               description='Learn Python from scratch.',
-                               price=19.99,
-                               stock=10)
-    response = client.post(reverse('transaction-list'),
-                           {'book_id': book.id, 'quantity': 2})
-    assert response.status_code == 201
-    assert response.json() == {'id': 1,
-                               'user': 1,
-                               'book': 1,
-                               'quantity': 2,
-                               'total_price': 39.98,
-                               'transaction_date': response.json()['transaction_date'],
-                               'status': 'Completed'}
+if __name__ == "__main__":
+    repo_path = "path/to/your/repository"  # Replace with the path to your Git repository
+    grouped_commits = extract_commit_messages(repo_path)
+    print(grouped_commits)
